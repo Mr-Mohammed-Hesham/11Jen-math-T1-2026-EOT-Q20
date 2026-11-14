@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎯 Complementary Events - رياضيات 11 عام | Mr. Mohammed Hesham</title>
+<meta name="description" content="امتحان تفاعلي عن إيجاد احتمالات المتمات وحل تطبيقات عليها - رياضيات صف 11 عام">
+<meta name="author" content="Mr. Mohammed Hesham">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); }
+body.en-mode { font-family: 'Inter', sans-serif; direction: ltr; }
+.arabic-math { font-family: 'Amiri', 'Cairo', serif; }
+.correct { background-color: #dcfce7 !important; border-color: #16a34a !important; }
+.incorrect { background-color: #fee2e2 !important; border-color: #dc2626 !important; }
+.timer-warning { color: #dc2626 !important; animation: pulse 1s infinite; }
+@keyframes pulse { 50% { opacity: 0.7; } }
+@media print { .no-print { display: none !important; } }
+.success-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.875rem; }
+.grade-excellent { background: #dcfce7; color: #166534; }
+.grade-good { background: #fef3c7; color: #92400e; }
+.grade-pass { background: #dbeafe; color: #1e40af; }
+.grade-fail { background: #fee2e2; color: #991b1b; }
+.lang-switch { position: fixed; top: 16px; left: 16px; z-index: 100; background: white; padding: 6px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; gap: 4px; border: 2px solid #1e40af; }
+body.en-mode .lang-switch { left: auto; right: 16px; }
+.lang-btn { padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; border: none; font-size: 0.875rem; background: transparent; color: #6b7280; }
+.lang-btn.active { background: #1e40af; color: white; }
+.shuffle-badge { display: inline-block; background: linear-gradient(135deg, #1e40af, #1e3a8a); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; margin-right: 8px; }
+body.en-mode .shuffle-badge { margin-right: 0; margin-left: 8px; }
+.math-display { display: inline-block; direction: ltr; font-family: 'Amiri', serif; font-size: 1.15em; padding: 2px 8px; background: #dbeafe; border-radius: 4px; margin: 2px; color: #1e3a8a; font-weight: 700; }
+.save-indicator { position: fixed; bottom: 20px; left: 20px; z-index: 200; background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+body.en-mode .save-indicator { left: auto; right: 20px; }
+.save-indicator.show { opacity: 1; }
+.formula-box { background: #dbeafe; border: 2px solid #1e40af; border-radius: 8px; padding: 12px; margin: 10px 0; font-family: 'Amiri', serif; direction: ltr; text-align: center; }
+.svg-graph { display: block; margin: 12px auto; background: white; border: 2px solid #e5e7eb; border-radius: 12px; padding: 8px; max-width: 100%; }
+.graph-container { text-align: center; margin: 10px 0; }
+.module-badge { display: inline-block; padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; margin-bottom: 8px; }
+.module-1 { background: #dbeafe; color: #1e40af; }
+.module-2 { background: #fce7f3; color: #9f1239; }
+.module-3 { background: #fef3c7; color: #92400e; }
+.module-4 { background: #ecfdf5; color: #065f46; }
+.module-5 { background: #ede9fe; color: #5b21b6; }
+.module-6 { background: #fee2e2; color: #991b1b; }
+</style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+<div class="lang-switch no-print">
+<button class="lang-btn active" onclick="setLanguage('ar')" id="btn-ar">عربي</button>
+<button class="lang-btn" onclick="setLanguage('en')" id="btn-en">EN</button>
+</div>
+
+<div id="saveIndicator" class="save-indicator">💾 <span data-ar="تم الحفظ" data-en="Saved">تم الحفظ</span></div>
+
+<div id="timer-container" class="max-w-5xl mx-auto mb-4 text-center no-print">
+<div class="bg-white p-4 rounded-2xl shadow-lg inline-block border-2 border-blue-100">
+<span class="text-gray-600 ml-2">⏰ <span data-ar="الوقت المتبقي:" data-en="Time Left:">الوقت المتبقي:</span></span>
+<span id="timer" class="text-2xl font-bold text-blue-800 font-mono">45:00</span>
+<span class="shuffle-badge">🎯 <span data-ar="المتمّات" data-en="Complements">المتمّات</span> - 30 <span data-ar="سؤال" data-en="Questions">سؤال</span></span>
+</div>
+</div>
+
+<div class="max-w-5xl mx-auto mb-6 flex flex-wrap gap-3 justify-center no-print">
+<button onclick="toggleAnswers()" class="bg-blue-800 hover:bg-blue-900 text-white px-5 py-2 rounded-xl font-medium transition shadow">👀 <span data-ar="إظهار/إخفاء الإجابات" data-en="Show/Hide Answers">إظهار/إخفاء الإجابات</span></button>
+<button onclick="window.print()" class="bg-gray-700 hover:bg-gray-900 text-white px-5 py-2 rounded-xl font-medium transition shadow">🖨️ <span data-ar="طباعة" data-en="Print">طباعة</span></button>
+<button onclick="reshuffleExam()" class="bg-gradient-to-r from-blue-800 to-indigo-600 hover:from-blue-900 hover:to-indigo-700 text-white px-5 py-2 rounded-xl font-medium transition shadow">🔄 <span data-ar="أسئلة جديدة" data-en="New Questions">أسئلة جديدة</span></button>
+<button onclick="clearProgress()" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl font-medium transition shadow">🗑️ <span data-ar="مسح التقدم" data-en="Clear Progress">مسح التقدم</span></button>
+</div>
+
+<header class="max-w-5xl mx-auto bg-white p-8 rounded-3xl shadow-2xl mb-8 border-4 border-blue-700">
+<div class="text-center">
+<div class="inline-block bg-blue-800 text-white px-6 py-2 rounded-full text-sm font-bold mb-4">MATH GRADE 11 GENERAL - QUESTION 20</div>
+<h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">🎯 <span data-ar="إيجاد احتمالات المتمّات وحل تطبيقات عليها" data-en="Finding Probabilities of Complements & Applications">إيجاد احتمالات المتمّات وحل تطبيقات عليها</span></h1>
+<h2 class="text-xl text-blue-800 font-semibold mb-2"><span data-ar="الوحدة 3 - الدرس 3-7: احتمالات الأحداث المتممة | ص 198 (16 - 20)" data-en="Unit 3 - Lesson 3-7: Complementary Events | Page 198 (16-20)">الوحدة 3 - الدرس 3-7: احتمالات الأحداث المتممة | ص 198 (16 - 20)</span></h2>
+<p class="text-gray-600 mb-4"><span data-ar="متممة الحدث A هي «ليس A» واحتمالها: P(A') = 1 - P(A)" data-en="The complement of A is 'not A' with P(A') = 1 - P(A)">متممة الحدث A هي «ليس A» واحتمالها: P(A') = 1 - P(A)</span></p>
+<p class="text-sm text-green-600 font-semibold">💾 <span data-ar="يتم حفظ تقدمك تلقائياً - 30 سؤالاً في 6 أقسام" data-en="Auto-saved - 30 questions in 6 sections">يتم حفظ تقدمك تلقائياً - 30 سؤالاً في 6 أقسام</span></p>
+</div>
+<div class="mt-6 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+<span>📅 <span data-ar="التاريخ:" data-en="Date:">التاريخ:</span> <input type="text" id="examDate" class="border-b-2 border-blue-300 bg-transparent w-32 text-center"></span>
+<span>😊 <span data-ar="الاسم:" data-en="Name:">الاسم:</span> <input type="text" id="studentName" class="border-b-2 border-blue-300 bg-transparent w-40 text-center" data-placeholder-ar="اكتب اسمك" data-placeholder-en="Your name" placeholder="اكتب اسمك"></span>
+<span>🏫 <span data-ar="الشعبة:" data-en="Class:">الشعبة:</span> <input type="text" id="studentClass" class="border-b-2 border-blue-300 bg-transparent w-32 text-center" data-placeholder-ar="الشعبة" data-placeholder-en="Class" placeholder="الشعبة"></span>
+<span>⏰ <span data-ar="المدة: 45 دقيقة" data-en="Duration: 45 min">المدة: 45 دقيقة</span></span>
+<span>📊 <span data-ar="المجموع: 100 درجة" data-en="Total: 100 points">المجموع: 100 درجة</span></span>
+</div>
+</header>
+
+<div class="max-w-5xl mx-auto mb-6 bg-white p-4 rounded-xl shadow-lg border-2 border-blue-200 no-print">
+<h3 class="font-bold text-lg mb-3 text-blue-800 text-center">🎯 <span data-ar="قاعدة المتمّة" data-en="The Complement Rule">قاعدة المتمّة</span></h3>
+<div class="grid md:grid-cols-3 gap-3 text-sm">
+<div class="formula-box"><strong><span data-ar="القاعدة:" data-en="Rule:">القاعدة:</span></strong><br><span class="math-display">P(ليس A) = 1 - P(A)</span></div>
+<div class="formula-box"><strong><span data-ar="المجموع:" data-en="Sum:">المجموع:</span></strong><br><span class="math-display">P(A) + P(A') = 1</span></div>
+<div class="formula-box"><strong><span data-ar="فائدتها:" data-en="Useful for:">فائدتها:</span></strong><br><span data-ar="«واحد على الأقل» = 1 - «لا شيء»" data-en="'At least one' = 1 - 'none'">«واحد على الأقل» = 1 - «لا شيء»</span></div>
+</div>
+<div id="method-holder" class="mt-2"></div>
+</div>
+
+<main class="max-w-5xl mx-auto space-y-8" id="exam-content"></main>
+
+<div class="text-center no-print pb-8 mt-8">
+<button onclick="gradeExam()" class="bg-gradient-to-r from-blue-800 to-indigo-600 hover:from-blue-900 hover:to-indigo-700 text-white text-lg px-12 py-4 rounded-2xl font-bold shadow-xl transition transform hover:scale-105">🎯 <span data-ar="صحح إجاباتي!" data-en="Grade My Exam!">صحح إجاباتي!</span></button>
+</div>
+
+<div id="results-panel" class="max-w-5xl mx-auto mt-8 bg-white p-8 rounded-3xl shadow-2xl border-4 border-blue-700 hidden no-print">
+<h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">🏆 <span data-ar="نتيجتك يا بطل!" data-en="Your Result, Champion!">نتيجتك يا بطل!</span> 🏆</h2>
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+<div class="bg-blue-50 p-4 rounded-xl text-center"><p>😊 <span data-ar="الاسم" data-en="Name">الاسم</span></p><p id="res-name" class="font-bold text-xl text-blue-800">-</p></div>
+<div class="bg-indigo-50 p-4 rounded-xl text-center"><p>📅 <span data-ar="التاريخ" data-en="Date">التاريخ</span></p><p id="res-date" class="font-bold text-xl text-indigo-700">-</p></div>
+<div class="bg-blue-50 p-4 rounded-xl text-center"><p>🌟 <span data-ar="المجموع" data-en="Total">المجموع</span></p><p id="res-total" class="font-bold text-3xl text-blue-800">0 / 100</p></div>
+</div>
+<div class="text-center mb-6">
+<span id="success-badge" class="success-badge grade-excellent">-</span>
+<p id="success-percent" class="text-4xl font-bold text-blue-800 mt-2">0%</p>
+<p class="text-sm text-gray-500"><span data-ar="نسبة النجاح" data-en="Success Rate">نسبة النجاح</span></p>
+</div>
+<div class="bg-gray-50 p-6 rounded-xl mb-6">
+<h3 class="font-bold text-lg mb-4 text-gray-800">📊 <span data-ar="أداؤك في كل قسم:" data-en="Your Performance by Section:">أداؤك في كل قسم:</span></h3>
+<div class="space-y-3" id="sections-performance"></div>
+</div>
+<div class="text-center">
+<button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-blue-800 to-indigo-600 text-white text-lg px-8 py-3 rounded-2xl font-bold shadow-xl transition">📧 <span data-ar="أرسل النتيجة للمعلم" data-en="Send Result to Teacher">أرسل النتيجة للمعلم</span></button>
+<p id="emailStatus" class="text-sm mt-2 text-center font-medium"></p>
+</div>
+</div>
+
+<footer class="max-w-5xl mx-auto mt-10 mb-8 text-center text-gray-500 text-sm no-print">
+© Complementary Events - Grade 11 General | Mr. Mohammed Hesham 🎯
+</footer>
+
+<script>
+const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
+const SERVICE_ID = "service_w15m64i";
+const TEMPLATE_ID = "template_5b0u2tq";
+const TARGET_EMAIL = "mohammedhesham872@gmail.com";
+emailjs.init(PUBLIC_KEY);
+
+const STORAGE_KEY = 'complements_g11_v1';
+const TOTAL_TIME = 2700;
+const TOTAL_QUESTIONS = 30;
+const TOTAL_SECTIONS = 6;
+const QUESTIONS_PER_SECTION = 5;
+
+let currentSeed = null, answersVisible = false, saveIndicatorTimeout = null;
+let currentLang = 'ar', timeRemaining = TOTAL_TIME, timerInterval;
+let examData, correctAnswersMap = {}, rng = null;
+
+function mulberry32(a){return function(){var t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function showSaveIndicator(){const i=document.getElementById('saveIndicator');i.classList.add('show');if(saveIndicatorTimeout)clearTimeout(saveIndicatorTimeout);saveIndicatorTimeout=setTimeout(()=>i.classList.remove('show'),1500)}
+function saveState(s=true){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({seed:currentSeed,lang:currentLang,studentName:document.getElementById('studentName').value,studentClass:document.getElementById('studentClass').value,examDate:document.getElementById('examDate').value,answers:getSelectedAnswers(),timeRemaining:timeRemaining,answersVisible:answersVisible,savedAt:Date.now()}));if(s)showSaveIndicator()}catch(e){console.error(e)}}
+function loadState(){try{const s=localStorage.getItem(STORAGE_KEY);return s?JSON.parse(s):null}catch(e){return null}}
+function getSelectedAnswers(){const a={};for(let i=0;i<TOTAL_QUESTIONS;i++){const s=document.querySelector('input[name="q'+i+'"]:checked');if(s)a[i]=s.value}return a}
+function restoreAnswers(a){if(!a)return;for(const[i,v]of Object.entries(a)){const r=document.querySelector('input[name="q'+i+'"][value="'+v+'"]');if(r)r.checked=true}}
+function clearProgress(){if(confirm(currentLang==='ar'?'⚠️ هل أنت متأكد من مسح كل التقدم؟':'⚠️ Clear all progress?')){localStorage.removeItem(STORAGE_KEY);location.reload()}}
+function setupAnswerListeners(){document.getElementById('exam-content').addEventListener('change',e=>{if(e.target.type==='radio')saveState()})}
+function setupInputListeners(){['studentName','studentClass','examDate'].forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener('input',()=>saveState(false));el.addEventListener('blur',()=>saveState())}})}
+
+// ==================== SVG DIAGRAMS ====================
+const svgGraphs = {
+fig_rule: `<svg class="svg-graph" width="500" height="250" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="240" rx="12" fill="#dbeafe" stroke="#1e40af" stroke-width="2"/>
+<text x="250" y="26" text-anchor="middle" font-size="14" fill="#1e3a8a" font-weight="bold">🎯 المتمّة: كل ما هو خارج الحدث داخل الفضاء</text>
+<rect x="50" y="45" width="240" height="150" rx="12" fill="#fff" stroke="#1e3a8a" stroke-width="2.5"/>
+<text x="68" y="66" font-size="12" fill="#1e3a8a" font-weight="bold">S</text>
+<circle cx="150" cy="120" r="52" fill="#93c5fd" fill-opacity="0.8" stroke="#1d4ed8" stroke-width="2.5"/>
+<text x="150" y="115" text-anchor="middle" font-size="12" fill="#1e3a8a" font-weight="bold">A</text>
+<text x="150" y="133" text-anchor="middle" font-size="10" fill="#1e3a8a">P(A)</text>
+<text x="240" y="180" text-anchor="middle" font-size="11" fill="#dc2626" font-weight="bold">A' (ليس A)</text>
+<path d="M 235 170 L 215 150" stroke="#dc2626" stroke-width="1.5" marker-end="url(#cmA)"/>
+<rect x="310" y="50" width="150" height="70" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2.5"/>
+<text x="385" y="76" text-anchor="middle" font-size="13" fill="#92400e" font-family="'Amiri',serif" font-weight="bold">P(A') = 1 - P(A)</text>
+<text x="385" y="102" text-anchor="middle" font-size="10" fill="#92400e">مثال: 1 - 1/6 = 5/6</text>
+<rect x="310" y="130" width="150" height="65" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+<text x="385" y="155" text-anchor="middle" font-size="11" fill="#166534" font-weight="bold">P(A) + P(A') = 1</text>
+<text x="385" y="178" text-anchor="middle" font-size="9.5" fill="#166534">الحدث ومتمته يغطيان الفضاء كاملاً</text>
+<rect x="50" y="205" width="410" height="28" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="255" y="224" text-anchor="middle" font-size="10.5" fill="#991b1b" font-weight="bold">⚠️ «ليس 3» تعني {1,2,4,5,6} — خمسة نواتج لا ناتج واحد!</text>
+<defs><marker id="cmA" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L0,8 L7,4 z" fill="#dc2626"/></marker></defs>
+</svg>`,
+
+fig_die: `<svg class="svg-graph" width="500" height="230" viewBox="0 0 500 230" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="220" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+<text x="250" y="26" text-anchor="middle" font-size="13" fill="#065f46" font-weight="bold">🎲 تمرين 16: عدم الحصول على 3</text>
+<g font-size="16" font-weight="bold" text-anchor="middle" font-family="'Amiri',serif">
+<rect x="50" y="45" width="60" height="60" rx="10" fill="#bbf7d0" stroke="#16a34a" stroke-width="2.5"/><text x="80" y="82" fill="#166534">1</text>
+<rect x="120" y="45" width="60" height="60" rx="10" fill="#bbf7d0" stroke="#16a34a" stroke-width="2.5"/><text x="150" y="82" fill="#166534">2</text>
+<rect x="190" y="45" width="60" height="60" rx="10" fill="#fecaca" stroke="#dc2626" stroke-width="3"/><text x="220" y="82" fill="#991b1b">3</text>
+<rect x="260" y="45" width="60" height="60" rx="10" fill="#bbf7d0" stroke="#16a34a" stroke-width="2.5"/><text x="290" y="82" fill="#166534">4</text>
+<rect x="330" y="45" width="60" height="60" rx="10" fill="#bbf7d0" stroke="#16a34a" stroke-width="2.5"/><text x="360" y="82" fill="#166534">5</text>
+<rect x="400" y="45" width="60" height="60" rx="10" fill="#bbf7d0" stroke="#16a34a" stroke-width="2.5"/><text x="430" y="82" fill="#166534">6</text>
+</g>
+<text x="220" y="125" text-anchor="middle" font-size="10" fill="#dc2626" font-weight="bold">الحدث: P(3) = 1/6</text>
+<text x="330" y="125" text-anchor="middle" font-size="10" fill="#166534" font-weight="bold">المتمّة: 5 أوجه</text>
+<rect x="50" y="140" width="410" height="70" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+<text x="255" y="163" text-anchor="middle" font-size="12" fill="#92400e" font-family="'Amiri',serif" font-weight="bold">P(ليس 3) = 1 - 1/6 = 5/6</text>
+<text x="255" y="185" text-anchor="middle" font-size="10" fill="#92400e">أو بالعدّ المباشر: 5 نواتج مؤاتية من 6 ⇒ 5/6 ✓ نفس النتيجة</text>
+<text x="255" y="202" text-anchor="middle" font-size="9.5" fill="#166534" font-weight="bold">الإجابة: C</text>
+</svg>`,
+
+fig_cards: `<svg class="svg-graph" width="500" height="220" viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="210" rx="12" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/>
+<text x="250" y="26" text-anchor="middle" font-size="13" fill="#9f1239" font-weight="bold">🃏 تمرين 17: ليس دين (ماسّة)</text>
+<rect x="50" y="45" width="400" height="50" rx="8" fill="#fbcfe8" stroke="#db2777" stroke-width="2"/>
+<rect x="50" y="45" width="100" height="50" rx="8" fill="#fda4af" stroke="#be123c" stroke-width="2.5"/>
+<text x="100" y="75" text-anchor="middle" font-size="11" fill="#881337" font-weight="bold">دين 13</text>
+<text x="300" y="75" text-anchor="middle" font-size="11" fill="#9f1239" font-weight="bold">ليس دين 39</text>
+<rect x="50" y="108" width="400" height="40" rx="8" fill="#fff" stroke="#ec4899" stroke-width="2"/>
+<text x="250" y="133" text-anchor="middle" font-size="11" fill="#9f1239" font-family="'Amiri',serif" font-weight="bold">P(دين) = 13/52 = 1/4</text>
+<rect x="50" y="158" width="400" height="44" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+<text x="250" y="176" text-anchor="middle" font-size="12" fill="#166534" font-family="'Amiri',serif" font-weight="bold">P(ليس دين) = 1 - 1/4 = 3/4</text>
+<text x="250" y="194" text-anchor="middle" font-size="9.5" fill="#166534">تحقق: 39/52 = 3/4 ✓</text>
+</svg>`,
+
+fig_spinner: `<svg class="svg-graph" width="500" height="250" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="240" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+<text x="250" y="26" text-anchor="middle" font-size="13" fill="#92400e" font-weight="bold">🎡 تمرين 19: قرص 1-8 وعدم التوقف على 5</text>
+<g transform="translate(140,135)">
+<circle r="80" fill="#fff" stroke="#92400e" stroke-width="2.5"/>
+<path d="M0,0 L80,0 A80,80 0 0,0 56.57,-56.57 Z" fill="#fde68a" stroke="#92400e" stroke-width="1.5"/>
+<path d="M0,0 L56.57,-56.57 A80,80 0 0,0 0,-80 Z" fill="#fde68a" stroke="#92400e" stroke-width="1.5"/>
+<path d="M0,0 L0,-80 A80,80 0 0,0 -56.57,-56.57 Z" fill="#fde68a" stroke="#92400e" stroke-width="1.5"/>
+<path d="M0,0 L-56.57,-56.57 A80,80 0 0,0 -80,0 Z" fill="#fecaca" stroke="#dc2626" stroke-width="2.5"/>
+<path d="M0,0 L-80,0 A80,80 0 0,0 -56.57,56.57 Z" fill="#fde68a" stroke="#92400e" stroke-width="1.5"/>
+<path d="M0,0 L-56.57,56.57 A80,80 0 0,0 0,80 Z" fill="#fde68a" stroke="#92400e" stroke-width="1.5"/>
+<path d="M0,0 L0,80 A80,80 0 0,0 56.57,56.57 Z" fill="#fde68a" stroke="#92400e" stroke-width="1.5"/>
+<path d="M0,0 L56.57,56.57 A80,80 0 0,0 80,0 Z" fill="#fde68a" stroke="#92400e" stroke-width="1.5"/>
+<g font-size="12" font-weight="bold" text-anchor="middle" font-family="'Amiri',serif">
+<text x="62" y="-22" fill="#92400e">1</text><text x="24" y="-58" fill="#92400e">2</text><text x="-24" y="-58" fill="#92400e">3</text><text x="-62" y="-22" fill="#dc2626">5</text>
+<text x="-62" y="30" fill="#92400e">6</text><text x="-24" y="64" fill="#92400e">7</text><text x="24" y="64" fill="#92400e">8</text><text x="62" y="30" fill="#92400e">4</text>
+</g>
+<line x1="0" y1="0" x2="30" y2="-55" stroke="#16a34a" stroke-width="4" marker-end="url(#spA)"/>
+<circle r="6" fill="#92400e"/>
+</g>
+<rect x="270" y="60" width="190" height="130" rx="10" fill="#fff" stroke="#f59e0b" stroke-width="2"/>
+<text x="365" y="85" text-anchor="middle" font-size="11" fill="#92400e" font-family="'Amiri',serif" font-weight="bold">P(5) = 1/8</text>
+<text x="365" y="112" text-anchor="middle" font-size="12" fill="#166534" font-family="'Amiri',serif" font-weight="bold">P(ليس 5) = 1 - 1/8</text>
+<text x="365" y="140" text-anchor="middle" font-size="14" fill="#166534" font-family="'Amiri',serif" font-weight="bold">= 7/8</text>
+<text x="365" y="165" text-anchor="middle" font-size="9.5" fill="#92400e">7 قطاعات من 8 ✓</text>
+<defs><marker id="spA" markerWidth="8" markerHeight="8" refX="4" refY="7" orient="auto"><path d="M0,0 L8,0 L4,7 z" fill="#16a34a"/></marker></defs>
+</svg>`,
+
+fig_books: `<svg class="svg-graph" width="500" height="220" viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="210" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+<text x="250" y="26" text-anchor="middle" font-size="13" fill="#5b21b6" font-weight="bold">📚 تمرين 20: كتب ليست للمؤلف</text>
+<rect x="50" y="45" width="400" height="46" rx="8" fill="#ddd6fe" stroke="#7c3aed" stroke-width="2"/>
+<rect x="50" y="45" width="16" height="46" fill="#7c3aed" stroke="#4c1d95" stroke-width="2"/>
+<text x="58" y="106" text-anchor="middle" font-size="9" fill="#5b21b6" font-weight="bold">20</text>
+<text x="260" y="74" text-anchor="middle" font-size="11" fill="#5b21b6" font-weight="bold">480 كتاباً لغير المؤلف</text>
+<text x="250" y="126" text-anchor="middle" font-size="10.5" fill="#5b21b6" font-family="'Amiri',serif" font-weight="bold">500 - 20 = 480</text>
+<rect x="50" y="140" width="400" height="60" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+<text x="250" y="163" text-anchor="middle" font-size="12" fill="#166534" font-family="'Amiri',serif" font-weight="bold">P = 480/500 = 24/25</text>
+<text x="250" y="185" text-anchor="middle" font-size="10" fill="#166534">وبالمتمّة: 1 - 20/500 = 1 - 1/25 = 24/25 ✓</text>
+</svg>`,
+
+fig_atleast: `<svg class="svg-graph" width="500" height="240" viewBox="0 0 500 240" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="230" rx="12" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="250" y="26" text-anchor="middle" font-size="13" fill="#991b1b" font-weight="bold">💡 خدعة «واحد على الأقل»: استخدم المتمّة!</text>
+<rect x="40" y="45" width="200" height="80" rx="10" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+<text x="140" y="68" text-anchor="middle" font-size="11" fill="#991b1b" font-weight="bold">المطلوب: صورة واحدة على الأقل</text>
+<text x="140" y="88" text-anchor="middle" font-size="10" fill="#991b1b">HH, HT, TH ⇒ عدّ مباشر مزعج</text>
+<text x="140" y="108" text-anchor="middle" font-size="10" fill="#991b1b">يزداد سوءاً مع 3 عملات أو أكثر</text>
+<path d="M 245 85 L 275 85" stroke="#16a34a" stroke-width="2.5" marker-end="url(#alA)"/>
+<rect x="280" y="45" width="180" height="80" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+<text x="370" y="68" text-anchor="middle" font-size="11" fill="#166534" font-weight="bold">المتمّة: لا صورة إطلاقاً</text>
+<text x="370" y="90" text-anchor="middle" font-size="11" fill="#166534" font-family="'Amiri',serif" font-weight="bold">P(TT) = 1/4</text>
+<text x="370" y="110" text-anchor="middle" font-size="10" fill="#166534">ناتج واحد فقط!</text>
+<rect x="40" y="140" width="420" height="50" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2.5"/>
+<text x="250" y="161" text-anchor="middle" font-size="12" fill="#92400e" font-family="'Amiri',serif" font-weight="bold">P(واحد على الأقل) = 1 - P(لا شيء) = 1 - 1/4 = 3/4</text>
+<text x="250" y="180" text-anchor="middle" font-size="9.5" fill="#92400e">القاعدة الذهبية لكل مسائل «على الأقل»</text>
+<rect x="40" y="198" width="420" height="28" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="250" y="217" text-anchor="middle" font-size="10" fill="#991b1b" font-weight="bold">مثال: مكعبان P(6 واحدة على الأقل) = 1 - 25/36 = 11/36</text>
+<defs><marker id="alA" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="#16a34a"/></marker></defs>
+</svg>`,
+
+fig_pairs: `<svg class="svg-graph" width="500" height="230" viewBox="0 0 500 230" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="220" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+<text x="250" y="26" text-anchor="middle" font-size="13" fill="#065f46" font-weight="bold">🔄 أزواج المتمّات الشهيرة</text>
+<g font-size="11" text-anchor="middle">
+<rect x="40" y="45" width="200" height="34" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="2"/><text x="140" y="67" fill="#065f46" font-weight="bold">واحد على الأقل</text>
+<rect x="260" y="45" width="200" height="34" rx="8" fill="#fecaca" stroke="#dc2626" stroke-width="2"/><text x="360" y="67" fill="#991b1b" font-weight="bold">لا شيء (صفر)</text>
+<rect x="40" y="87" width="200" height="34" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="2"/><text x="140" y="109" fill="#065f46" font-weight="bold">الكل ينجح</text>
+<rect x="260" y="87" width="200" height="34" rx="8" fill="#fecaca" stroke="#dc2626" stroke-width="2"/><text x="360" y="109" fill="#991b1b" font-weight="bold">واحد على الأقل يفشل</text>
+<rect x="40" y="129" width="200" height="34" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="2"/><text x="140" y="151" fill="#065f46" font-weight="bold">يساوي 3 تماماً</text>
+<rect x="260" y="129" width="200" height="34" rx="8" fill="#fecaca" stroke="#dc2626" stroke-width="2"/><text x="360" y="151" fill="#991b1b" font-weight="bold">لا يساوي 3</text>
+</g>
+<rect x="40" y="175" width="420" height="40" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+<text x="250" y="192" text-anchor="middle" font-size="10.5" fill="#92400e" font-weight="bold">متممة المتمّة هي الحدث نفسه: (A')' = A</text>
+<text x="250" y="208" text-anchor="middle" font-size="10" fill="#92400e" font-family="'Amiri',serif">P(A) = 1 - P(A')</text>
+</svg>`
+};
+
+// ==================== EXAM DATA ====================
+const originalExamData = {
+sections: [
+{ id:'s1', title:{ar:'🔹 القسم 1: متمّات أساسية (مثل 16، 18، 19) (Q1-Q5)',en:'🔹 Section 1: Basic Complements (like 16, 18, 19) (Q1-Q5)'}, questions:[
+{ q:{ar:'<strong>السؤال 1 (تمرين 16):</strong> حدد احتمال الحدث: رمي حجر نرد وعدم الحصول على 3.',en:'<strong>Q1 (Ex.16):</strong> Probability of rolling a die and NOT getting 3.'},
+  svg: svgGraphs.fig_die,
+  options:[{ar:'<span class="math-display">1/6</span>',en:'<span class="math-display">1/6</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">5/6</span>',en:'<span class="math-display">5/6</span>'},{ar:'<span class="math-display">2/3</span>',en:'<span class="math-display">2/3</span>'}],
+  correct:2, answer:{ar:'P(3) = 1/6 ⇒ P(ليس 3) = 1 - 1/6 = 5/6',en:'1 - 1/6 = 5/6'} },
+{ q:{ar:'<strong>السؤال 2 (تمرين 18):</strong> حدد احتمال الحدث: إلقاء قطعة نقد معدنية وعدم سقوطها على الصورة.',en:'<strong>Q2 (Ex.18):</strong> Probability of tossing a coin and NOT getting heads.'},
+  options:[{ar:'<span class="math-display">1</span>',en:'<span class="math-display">1</span>'},{ar:'<span class="math-display">0</span>',en:'<span class="math-display">0</span>'},{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'}],
+  correct:3, answer:{ar:'P(H) = 1/2 ⇒ P(ليس صورة) = 1 - 1/2 = 1/2',en:'1/2'} },
+{ q:{ar:'<strong>السؤال 3 (تمرين 19):</strong> حدد احتمال الحدث: تدوير قرص دوار مرقم من 1 إلى 8 وعدم توقفه على العدد 5.',en:'<strong>Q3 (Ex.19):</strong> Spinner 1-8: probability of NOT stopping on 5.'},
+  svg: svgGraphs.fig_spinner,
+  options:[{ar:'<span class="math-display">1/8</span>',en:'<span class="math-display">1/8</span>'},{ar:'<span class="math-display">7/8</span>',en:'<span class="math-display">7/8</span>'},{ar:'<span class="math-display">3/8</span>',en:'<span class="math-display">3/8</span>'},{ar:'<span class="math-display">5/8</span>',en:'<span class="math-display">5/8</span>'}],
+  correct:1, answer:{ar:'P(5) = 1/8 ⇒ المتمّة = 1 - 1/8 = 7/8',en:'7/8'} },
+{ q:{ar:'<strong>السؤال 4:</strong> حدد احتمال الحدث: رمي حجر نرد وعدم الحصول على عدد زوجي.',en:'<strong>Q4:</strong> Probability of rolling a die and NOT getting an even number.'},
+  options:[{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">1/6</span>',en:'<span class="math-display">1/6</span>'},{ar:'<span class="math-display">5/6</span>',en:'<span class="math-display">5/6</span>'},{ar:'<span class="math-display">1/3</span>',en:'<span class="math-display">1/3</span>'}],
+  correct:0, answer:{ar:'P(زوجي) = 3/6 = 1/2 ⇒ المتمّة = 1/2',en:'1/2'} },
+{ q:{ar:'<strong>السؤال 5:</strong> قرص دوار مرقم من 1 إلى 10: احتمال عدم التوقف على مضاعف للعدد 3 هو:',en:'<strong>Q5:</strong> Spinner 1-10: P(NOT a multiple of 3)?'},
+  options:[{ar:'<span class="math-display">3/10</span>',en:'<span class="math-display">3/10</span>'},{ar:'<span class="math-display">7/10</span>',en:'<span class="math-display">7/10</span>'},{ar:'<span class="math-display">1/10</span>',en:'<span class="math-display">1/10</span>'},{ar:'<span class="math-display">9/10</span>',en:'<span class="math-display">9/10</span>'}],
+  correct:1, answer:{ar:'مضاعفات 3: {3,6,9} ⇒ P = 3/10 ⇒ المتمّة = 7/10',en:'7/10'} }
+]},
+{ id:'s2', title:{ar:'🔹 القسم 2: متمّات أوراق اللعب (مثل 17) (Q6-Q10)',en:'🔹 Section 2: Card Complements (like 17) (Q6-Q10)'}, questions:[
+{ q:{ar:'<strong>السؤال 6 (تمرين 17):</strong> سحب بطاقة من 52: احتمال عدم الحصول على دين (ماسّة).',en:'<strong>Q6 (Ex.17):</strong> Draw one card: P(not a diamond).'},
+  svg: svgGraphs.fig_cards,
+  options:[{ar:'<span class="math-display">3/4</span>',en:'<span class="math-display">3/4</span>'},{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">12/13</span>',en:'<span class="math-display">12/13</span>'},{ar:'<span class="math-display">1/13</span>',en:'<span class="math-display">1/13</span>'}],
+  correct:0, answer:{ar:'P(دين) = 13/52 = 1/4 ⇒ المتمّة = 3/4',en:'3/4'} },
+{ q:{ar:'<strong>السؤال 7:</strong> سحب بطاقة من 52: احتمال ألا تكون ملكاً (K).',en:'<strong>Q7:</strong> P(not a king)?'},
+  options:[{ar:'<span class="math-display">1/13</span>',en:'<span class="math-display">1/13</span>'},{ar:'<span class="math-display">12/13</span>',en:'<span class="math-display">12/13</span>'},{ar:'<span class="math-display">4/13</span>',en:'<span class="math-display">4/13</span>'},{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'}],
+  correct:1, answer:{ar:'P(ملك) = 4/52 = 1/13 ⇒ المتمّة = 12/13',en:'12/13'} },
+{ q:{ar:'<strong>السؤال 8:</strong> سحب بطاقة من 52: احتمال ألا تكون حمراء.',en:'<strong>Q8:</strong> P(not red)?'},
+  options:[{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">3/4</span>',en:'<span class="math-display">3/4</span>'},{ar:'<span class="math-display">1/13</span>',en:'<span class="math-display">1/13</span>'}],
+  correct:1, answer:{ar:'P(حمراء) = 26/52 = 1/2 ⇒ المتمّة = 1/2',en:'1/2'} },
+{ q:{ar:'<strong>السؤال 9:</strong> سحب بطاقة من 52: احتمال ألا تكون ورقة وجه (J أو Q أو K).',en:'<strong>Q9:</strong> P(not a face card)?'},
+  options:[{ar:'<span class="math-display">10/13</span>',en:'<span class="math-display">10/13</span>'},{ar:'<span class="math-display">3/13</span>',en:'<span class="math-display">3/13</span>'},{ar:'<span class="math-display">12/13</span>',en:'<span class="math-display">12/13</span>'},{ar:'<span class="math-display">4/13</span>',en:'<span class="math-display">4/13</span>'}],
+  correct:0, answer:{ar:'ورق الوجه 12 ⇒ P = 12/52 = 3/13 ⇒ المتمّة = 10/13',en:'10/13'} },
+{ q:{ar:'<strong>السؤال 10:</strong> سحب بطاقة من 52: احتمال ألا تكون من البستون (♠).',en:'<strong>Q10:</strong> P(not a spade)?'},
+  options:[{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">12/13</span>',en:'<span class="math-display">12/13</span>'},{ar:'<span class="math-display">3/4</span>',en:'<span class="math-display">3/4</span>'},{ar:'<span class="math-display">1/13</span>',en:'<span class="math-display">1/13</span>'}],
+  correct:2, answer:{ar:'P(بستون) = 1/4 ⇒ المتمّة = 3/4',en:'3/4'} }
+]},
+{ id:'s3', title:{ar:'🔹 القسم 3: متمّات لفظية (مثل 20) (Q11-Q15)',en:'🔹 Section 3: Word-Problem Complements (like 20) (Q11-Q15)'}, questions:[
+{ q:{ar:'<strong>السؤال 11 (تمرين 20):</strong> اشترى متجر 20 كتاباً لمؤلف واحد من إجمالي 500 كتاب مبيع. ما احتمال ألا يكون الكتاب المختار عشوائياً لهذا المؤلف؟',en:'<strong>Q11 (Ex.20):</strong> 20 of 500 sold books are by one author. P(chosen book NOT by him)?'},
+  svg: svgGraphs.fig_books,
+  options:[{ar:'<span class="math-display">1/25</span>',en:'<span class="math-display">1/25</span>'},{ar:'<span class="math-display">1/500</span>',en:'<span class="math-display">1/500</span>'},{ar:'<span class="math-display">24/25</span>',en:'<span class="math-display">24/25</span>'},{ar:'<span class="math-display">19/20</span>',en:'<span class="math-display">19/20</span>'}],
+  correct:2, answer:{ar:'P(مؤلف) = 20/500 = 1/25 ⇒ المتمّة = 24/25 (أو 480/500)',en:'24/25'} },
+{ q:{ar:'<strong>السؤال 12:</strong> مصنع أنتج 500 قطعة منها 25 معيبة. ما احتمال أن تكون قطعة مختارة عشوائياً غير معيبة؟',en:'<strong>Q12:</strong> 25 of 500 items are defective. P(random item NOT defective)?'},
+  options:[{ar:'<span class="math-display">19/20</span>',en:'<span class="math-display">19/20</span>'},{ar:'<span class="math-display">1/20</span>',en:'<span class="math-display">1/20</span>'},{ar:'<span class="math-display">1/500</span>',en:'<span class="math-display">1/500</span>'},{ar:'<span class="math-display">24/25</span>',en:'<span class="math-display">24/25</span>'}],
+  correct:0, answer:{ar:'P(معيبة) = 25/500 = 1/20 ⇒ المتمّة = 19/20',en:'19/20'} },
+{ q:{ar:'<strong>السؤال 13:</strong> في يانصيب 200 تذكرة منها تذكرة فائزة واحدة. ما احتمال ألا تفوز تذكرة مشتراة؟',en:'<strong>Q13:</strong> Lottery: 1 winning ticket of 200. P(not winning)?'},
+  options:[{ar:'<span class="math-display">1/200</span>',en:'<span class="math-display">1/200</span>'},{ar:'<span class="math-display">199/200</span>',en:'<span class="math-display">199/200</span>'},{ar:'<span class="math-display">99/100</span>',en:'<span class="math-display">99/100</span>'},{ar:'<span class="math-display">199/100</span>',en:'<span class="math-display">199/100</span>'}],
+  correct:1, answer:{ar:'P(فوز) = 1/200 ⇒ المتمّة = 199/200',en:'199/200'} },
+{ q:{ar:'<strong>السؤال 14:</strong> صف من 35 طالباً غاب منهم 7. اختير طالب عشوائياً؛ ما احتمال ألا يكون غائباً؟',en:'<strong>Q14:</strong> Class of 35 with 7 absent. P(chosen student NOT absent)?'},
+  options:[{ar:'<span class="math-display">1/5</span>',en:'<span class="math-display">1/5</span>'},{ar:'<span class="math-display">4/5</span>',en:'<span class="math-display">4/5</span>'},{ar:'<span class="math-display">5/7</span>',en:'<span class="math-display">5/7</span>'},{ar:'<span class="math-display">7/28</span>',en:'<span class="math-display">7/28</span>'}],
+  correct:1, answer:{ar:'P(غائب) = 7/35 = 1/5 ⇒ المتمّة = 4/5',en:'4/5'} },
+{ q:{ar:'<strong>السؤال 15:</strong> كيس فيه 45 ثمرة منها 5 تالفة. ما احتمال اختيار ثمرة غير تالفة؟',en:'<strong>Q15:</strong> 45 fruits, 5 spoiled. P(not spoiled)?'},
+  options:[{ar:'<span class="math-display">8/9</span>',en:'<span class="math-display">8/9</span>'},{ar:'<span class="math-display">1/9</span>',en:'<span class="math-display">1/9</span>'},{ar:'<span class="math-display">4/9</span>',en:'<span class="math-display">4/9</span>'},{ar:'<span class="math-display">5/9</span>',en:'<span class="math-display">5/9</span>'}],
+  correct:0, answer:{ar:'P(تالفة) = 5/45 = 1/9 ⇒ المتمّة = 8/9',en:'8/9'} }
+]},
+{ id:'s4', title:{ar:'🔹 القسم 4: «واحد على الأقل» بالمتمّة (Q16-Q20)',en:'🔹 Section 4: "At Least One" via Complement (Q16-Q20)'}, questions:[
+{ q:{ar:'<strong>السؤال 16:</strong> رميت قطعتين نقديتين. ما احتمال ظهور صورة واحدة على الأقل؟',en:'<strong>Q16:</strong> Two coins: P(at least one head)?'},
+  svg: svgGraphs.fig_atleast,
+  options:[{ar:'<span class="math-display">3/4</span>',en:'<span class="math-display">3/4</span>'},{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">7/8</span>',en:'<span class="math-display">7/8</span>'}],
+  correct:0, answer:{ar:'المتمّة: لا صورة (TT) = 1/4 ⇒ P = 1 - 1/4 = 3/4',en:'3/4'} },
+{ q:{ar:'<strong>السؤال 17:</strong> رميت مكعبين. ما احتمال ظهور 6 واحدة على الأقل؟',en:'<strong>Q17:</strong> Two dice: P(at least one 6)?'},
+  options:[{ar:'<span class="math-display">25/36</span>',en:'<span class="math-display">25/36</span>'},{ar:'<span class="math-display">11/36</span>',en:'<span class="math-display">11/36</span>'},{ar:'<span class="math-display">1/6</span>',en:'<span class="math-display">1/6</span>'},{ar:'<span class="math-display">1/36</span>',en:'<span class="math-display">1/36</span>'}],
+  correct:1, answer:{ar:'المتمّة: لا 6 إطلاقاً = 25/36 ⇒ P = 11/36',en:'11/36'} },
+{ q:{ar:'<strong>السؤال 18:</strong> احتمال المطر يومياً 0.3 (مستقل). ما احتمال هطوله يوماً واحداً على الأقل من يومين؟',en:'<strong>Q18:</strong> Daily rain P = 0.3 (independent). P(rain at least one of two days)?'},
+  options:[{ar:'<span class="math-display">0.49</span>',en:'<span class="math-display">0.49</span>'},{ar:'<span class="math-display">0.51</span>',en:'<span class="math-display">0.51</span>'},{ar:'<span class="math-display">0.3</span>',en:'<span class="math-display">0.3</span>'},{ar:'<span class="math-display">0.7</span>',en:'<span class="math-display">0.7</span>'}],
+  correct:1, answer:{ar:'لا مطر يومين = 0.7 × 0.7 = 0.49 ⇒ P = 1 - 0.49 = 0.51',en:'0.51'} },
+{ q:{ar:'<strong>السؤال 19:</strong> رميت 3 قطع نقدية. ما احتمال ظهور كتابة واحدة على الأقل؟',en:'<strong>Q19:</strong> Three coins: P(at least one tail)?'},
+  options:[{ar:'<span class="math-display">1/8</span>',en:'<span class="math-display">1/8</span>'},{ar:'<span class="math-display">3/8</span>',en:'<span class="math-display">3/8</span>'},{ar:'<span class="math-display">7/8</span>',en:'<span class="math-display">7/8</span>'},{ar:'<span class="math-display">5/8</span>',en:'<span class="math-display">5/8</span>'}],
+  correct:2, answer:{ar:'المتمّة: لا كتابة (HHH) = 1/8 ⇒ P = 7/8',en:'7/8'} },
+{ q:{ar:'<strong>السؤال 20:</strong> رميت مكعبين. ما احتمال ألا يكون المجموع 7؟',en:'<strong>Q20:</strong> Two dice: P(sum NOT 7)?'},
+  options:[{ar:'<span class="math-display">1/6</span>',en:'<span class="math-display">1/6</span>'},{ar:'<span class="math-display">5/6</span>',en:'<span class="math-display">5/6</span>'},{ar:'<span class="math-display">2/3</span>',en:'<span class="math-display">2/3</span>'},{ar:'<span class="math-display">11/12</span>',en:'<span class="math-display">11/12</span>'}],
+  correct:1, answer:{ar:'P(7) = 6/36 = 1/6 ⇒ المتمّة = 5/6',en:'5/6'} }
+]},
+{ id:'s5', title:{ar:'🔹 القسم 5: مفاهيم المتمّة (Q21-Q25)',en:'🔹 Section 5: Complement Concepts (Q21-Q25)'}, questions:[
+{ q:{ar:'<strong>السؤال 21:</strong> لأي حدث A: <span class="math-display">P(A) + P(A\')</span> تساوي:',en:'<strong>Q21:</strong> For any event A: P(A) + P(A\') ='},
+  svg: svgGraphs.fig_rule,
+  options:[{ar:'<span class="math-display">1</span>',en:'<span class="math-display">1</span>'},{ar:'<span class="math-display">0</span>',en:'<span class="math-display">0</span>'},{ar:'<span class="math-display">0.5</span>',en:'<span class="math-display">0.5</span>'},{ar:'<span class="math-display">2</span>',en:'<span class="math-display">2</span>'}],
+  correct:0, answer:{ar:'الحدث ومتمته يغطيان الفضاء كاملاً دون تداخل ⇒ المجموع 1',en:'They partition S ⇒ sum = 1'} },
+{ q:{ar:'<strong>السؤال 22:</strong> إذا كان <span class="math-display">P(A) = 0.35</span> فما <span class="math-display">P(A\')</span>؟',en:'<strong>Q22:</strong> If P(A) = 0.35, then P(A\') ='},
+  options:[{ar:'<span class="math-display">0.35</span>',en:'<span class="math-display">0.35</span>'},{ar:'<span class="math-display">0.65</span>',en:'<span class="math-display">0.65</span>'},{ar:'<span class="math-display">0.3</span>',en:'<span class="math-display">0.3</span>'},{ar:'<span class="math-display">0.7</span>',en:'<span class="math-display">0.7</span>'}],
+  correct:1, answer:{ar:'1 - 0.35 = 0.65',en:'0.65'} },
+{ q:{ar:'<strong>السؤال 23:</strong> إذا كان <span class="math-display">P(A\') = 3/8</span> فما <span class="math-display">P(A)</span>؟',en:'<strong>Q23:</strong> If P(A\') = 3/8, then P(A) ='},
+  options:[{ar:'<span class="math-display">3/8</span>',en:'<span class="math-display">3/8</span>'},{ar:'<span class="math-display">8/3</span>',en:'<span class="math-display">8/3</span>'},{ar:'<span class="math-display">5/8</span>',en:'<span class="math-display">5/8</span>'},{ar:'<span class="math-display">3/5</span>',en:'<span class="math-display">3/5</span>'}],
+  correct:2, answer:{ar:'P(A) = 1 - 3/8 = 5/8',en:'5/8'} },
+{ q:{ar:'<strong>السؤال 24:</strong> متممة الحدث «واحد على الأقل» هي:',en:'<strong>Q24:</strong> The complement of "at least one" is:'},
+  svg: svgGraphs.fig_pairs,
+  options:[{ar:'واحد على الأكثر',en:'At most one'},{ar:'لا شيء (صفر)',en:'None (zero)'},{ar:'الكل تماماً',en:'Exactly all'},{ar:'اثنان على الأقل',en:'At least two'}],
+  correct:1, answer:{ar:'نفي «واحد على الأقل» هو «صفر تماماً»',en:'Negation of ≥1 is 0'} },
+{ q:{ar:'<strong>السؤال 25:</strong> متممة الحدث «جميع المحاولات تنجح» هي:',en:'<strong>Q25:</strong> The complement of "all attempts succeed" is:'},
+  options:[{ar:'جميع المحاولات تفشل',en:'All attempts fail'},{ar:'محاولة واحدة على الأقل تفشل',en:'At least one attempt fails'},{ar:'محاولة واحدة على الأقل تنجح',en:'At least one attempt succeeds'},{ar:'لا محاولة تنجح',en:'No attempt succeeds'}],
+  correct:1, answer:{ar:'نفي «الكل ينجح» = «واحد على الأقل يفشل» (وليس «الكل يفشل»)',en:'Negation of all = at least one fails'} }
+]},
+{ id:'s6', title:{ar:'🔹 القسم 6: تطبيقات مركبة (Q26-Q30)',en:'🔹 Section 6: Mixed Applications (Q26-Q30)'}, questions:[
+{ q:{ar:'<strong>السؤال 26:</strong> احتمال فوز فريق 2/7. ما احتمال ألا يفوز؟',en:'<strong>Q26:</strong> P(team wins) = 2/7. P(not winning)?'},
+  options:[{ar:'<span class="math-display">2/7</span>',en:'<span class="math-display">2/7</span>'},{ar:'<span class="math-display">5/7</span>',en:'<span class="math-display">5/7</span>'},{ar:'<span class="math-display">7/2</span>',en:'<span class="math-display">7/2</span>'},{ar:'<span class="math-display">5/2</span>',en:'<span class="math-display">5/2</span>'}],
+  correct:1, answer:{ar:'1 - 2/7 = 5/7',en:'5/7'} },
+{ q:{ar:'<strong>السؤال 27:</strong> رمي مكعب: ما احتمال عدم ظهور عدد أكبر من 4؟',en:'<strong>Q27:</strong> A die: P(NOT greater than 4)?'},
+  options:[{ar:'<span class="math-display">1/3</span>',en:'<span class="math-display">1/3</span>'},{ar:'<span class="math-display">2/3</span>',en:'<span class="math-display">2/3</span>'},{ar:'<span class="math-display">5/6</span>',en:'<span class="math-display">5/6</span>'},{ar:'<span class="math-display">1/6</span>',en:'<span class="math-display">1/6</span>'}],
+  correct:1, answer:{ar:'P(>4) = 2/6 = 1/3 ⇒ المتمّة = 2/3',en:'2/3'} },
+{ q:{ar:'<strong>السؤال 28:</strong> رمي مكعبين: ما احتمال ألا يكون المجموع 2؟',en:'<strong>Q28:</strong> Two dice: P(sum NOT 2)?'},
+  options:[{ar:'<span class="math-display">35/36</span>',en:'<span class="math-display">35/36</span>'},{ar:'<span class="math-display">1/36</span>',en:'<span class="math-display">1/36</span>'},{ar:'<span class="math-display">17/18</span>',en:'<span class="math-display">17/18</span>'},{ar:'<span class="math-display">5/6</span>',en:'<span class="math-display">5/6</span>'}],
+  correct:0, answer:{ar:'P(2) = 1/36 ⇒ المتمّة = 35/36',en:'35/36'} },
+{ q:{ar:'<strong>السؤال 29:</strong> كيس فيه 4 كرات حمراء و6 بيضاء: ما احتمال سحب كرة ليست حمراء؟',en:'<strong>Q29:</strong> Bag: 4 red, 6 white. P(not red)?'},
+  options:[{ar:'<span class="math-display">2/5</span>',en:'<span class="math-display">2/5</span>'},{ar:'<span class="math-display">3/5</span>',en:'<span class="math-display">3/5</span>'},{ar:'<span class="math-display">6/4</span>',en:'<span class="math-display">6/4</span>'},{ar:'<span class="math-display">1/5</span>',en:'<span class="math-display">1/5</span>'}],
+  correct:1, answer:{ar:'P(حمراء) = 4/10 = 2/5 ⇒ المتمّة = 3/5',en:'3/5'} },
+{ q:{ar:'<strong>السؤال 30:</strong> حدثان متنافيان P(A) = 1/3 و P(B) = 1/2. ما احتمال ألا يحدث أي منهما؟',en:'<strong>Q30:</strong> Mutually exclusive P(A)=1/3, P(B)=1/2. P(neither)?'},
+  options:[{ar:'<span class="math-display">5/6</span>',en:'<span class="math-display">5/6</span>'},{ar:'<span class="math-display">1/6</span>',en:'<span class="math-display">1/6</span>'},{ar:'<span class="math-display">1/3</span>',en:'<span class="math-display">1/3</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'}],
+  correct:1, answer:{ar:'P(A∪B) = 1/3 + 1/2 = 5/6 ⇒ المتمّة = 1 - 5/6 = 1/6',en:'1/6'} }
+]}
+]};
+
+function shuffleArray(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
+function prepareShuffledExam(){rng=mulberry32(currentSeed);examData=JSON.parse(JSON.stringify(originalExamData));correctAnswersMap={};let g=0;examData.sections.forEach(s=>{s.questions=shuffleArray(s.questions);s.questions.forEach(q=>{const oc=q.options.map((o,i)=>({option:o,isCorrect:i===q.correct}));const sh=shuffleArray(oc);q.options=sh.map(o=>o.option);q.correct=sh.findIndex(o=>o.isCorrect);correctAnswersMap[g]=String.fromCharCode(97+q.correct);g++})})}
+function reshuffleExam(){if(confirm(currentLang==='ar'?'🔄 سيتم إنشاء أسئلة جديدة ومسح إجاباتك. هل أنت متأكد؟':'🔄 New questions will be generated. Are you sure?')){currentSeed=Date.now();timeRemaining=TOTAL_TIME;answersVisible=false;prepareShuffledExam();renderExam();saveState();alert(currentLang==='ar'?'🎲 تم تغيير الأسئلة! حظاً موفقاً! 🍀':' Questions changed! Good luck! 🍀');window.scrollTo({top:0,behavior:'smooth'})}}
+function setLanguage(lang){currentLang=lang;document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';document.getElementById('btn-ar').classList.toggle('active',lang==='ar');document.getElementById('btn-en').classList.toggle('active',lang==='en');document.body.classList.toggle('en-mode',lang==='en');document.querySelectorAll('[data-ar]').forEach(el=>{el.textContent=el.getAttribute('data-'+lang)});document.querySelectorAll('[data-placeholder-ar]').forEach(el=>{el.placeholder=el.getAttribute('data-placeholder-'+lang)});renderExam();saveState(false)}
+function renderExam(){const container=document.getElementById('exam-content');const lbl={option:['a)','b)','c)','d)'],answer:currentLang==='ar'?'✅ الإجابة:':'✅ Answer:'};let html='',g=0;
+examData.sections.forEach((section,si)=>{const bc=['module-1','module-2','module-3','module-4','module-5','module-6'][si];html+='<section class="bg-white p-6 rounded-2xl shadow-lg border-2 border-blue-100"><div class="text-center mb-4"><span class="module-badge '+bc+'">'+section.title[currentLang]+'</span></div><ol class="space-y-4 text-sm">';
+section.questions.forEach(q=>{html+='<li class="border-r-4 border-blue-600 pr-4 py-2" id="q-'+g+'" style="border-right:4px solid #1e40af;padding-right:1rem;"><strong class="text-blue-800">'+(g+1)+'.</strong> '+q.q[currentLang]+'<br>';
+if(q.svg)html+='<div class="graph-container">'+q.svg+'</div>';
+q.options.forEach((opt,oi)=>{html+='<label class="cursor-pointer block mt-2 mr-4 hover:bg-blue-50 rounded-lg p-2 transition" style="margin-right:1rem;"><input type="radio" name="q'+g+'" value="'+String.fromCharCode(97+oi)+'" class="mr-2 ml-2"><span class="arabic-math">'+lbl.option[oi]+' '+opt[currentLang]+'</span></label>'});
+html+='<div class="answer-box text-green-700 mt-3 font-medium '+(answersVisible?'':'hidden')+' bg-green-50 rounded-lg p-3 border border-green-200">'+lbl.answer+' '+lbl.option[q.correct]+' <span class="arabic-math">'+q.options[q.correct][currentLang]+'</span><br><span class="text-sm text-green-700 mt-2 block arabic-math">'+q.answer[currentLang]+'</span></div></li>';g++});
+html+='</ol></section>'});
+container.innerHTML=html}
+function startTimer(){updateTimerDisplay();timerInterval=setInterval(()=>{timeRemaining--;updateTimerDisplay();if(timeRemaining%60===0)saveState(false);if(timeRemaining<=600)document.getElementById('timer').classList.add('timer-warning');if(timeRemaining<=0){clearInterval(timerInterval);alert(currentLang==='ar'?'⏰ انتهى الوقت!':"⏰ Time's up!");gradeExam()}},1000)}
+function updateTimerDisplay(){const m=Math.floor(timeRemaining/60),s=timeRemaining%60;document.getElementById('timer').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function toggleAnswers(){answersVisible=!answersVisible;document.querySelectorAll('.answer-box').forEach(el=>el.classList.toggle('hidden',!answersVisible));saveState(false)}
+function gradeExam(){let cc=0;const ss=new Array(TOTAL_SECTIONS).fill(0);
+for(let i=0;i<TOTAL_QUESTIONS;i++){const sel=document.querySelector('input[name="q'+i+'"]:checked');const li=document.getElementById('q-'+i);if(li){const ok=sel&&sel.value===correctAnswersMap[i];if(ok){cc++;li.classList.add('correct');li.classList.remove('incorrect');ss[Math.floor(i/QUESTIONS_PER_SECTION)]++}else{li.classList.add('incorrect');li.classList.remove('correct')}}}
+const score=Math.round(cc/TOTAL_QUESTIONS*100);document.getElementById('res-total').textContent=score+' / 100';document.getElementById('res-name').textContent=document.getElementById('studentName').value||(currentLang==='ar'?'بطل':'Champion');document.getElementById('res-date').textContent=new Date().toLocaleDateString(currentLang==='ar'?'ar-AE':'en-US');
+const pc=document.getElementById('sections-performance');pc.innerHTML='';examData.sections.forEach((s,i)=>{pc.innerHTML+='<div class="flex justify-between items-center p-3 bg-white rounded-lg"><span class="text-gray-700">'+s.title[currentLang]+'</span><span class="font-bold text-blue-800">'+ss[i]+'/'+QUESTIONS_PER_SECTION+'</span></div>'});
+const badge=document.getElementById('success-badge');document.getElementById('success-percent').textContent=score+'%';
+if(currentLang==='ar'){if(score>=90){badge.textContent='🌟 ممتاز جداً!';badge.className='success-badge grade-excellent'}else if(score>=75){badge.textContent='👏 ممتاز!';badge.className='success-badge grade-good'}else if(score>=50){badge.textContent='👍 جيد';badge.className='success-badge grade-pass'}else{badge.textContent='💪 حاول مرة أخرى';badge.className='success-badge grade-fail'}}
+else{if(score>=90){badge.textContent='🌟 Outstanding!';badge.className='success-badge grade-excellent'}else if(score>=75){badge.textContent='👏 Excellent!';badge.className='success-badge grade-good'}else if(score>=50){badge.textContent='👍 Good';badge.className='success-badge grade-pass'}else{badge.textContent='💪 Try Again';badge.className='success-badge grade-fail'}}
+document.getElementById('results-panel').classList.remove('hidden');document.getElementById('results-panel').scrollIntoView({behavior:'smooth'});if(timerInterval)clearInterval(timerInterval)}
+function sendResultsToEmail(){const btn=document.getElementById('sendEmailBtn'),status=document.getElementById('emailStatus');btn.disabled=true;btn.textContent=currentLang==='ar'?'⏳ جاري الإرسال...':'⏳ Sending...';
+const name=document.getElementById('studentName').value||'N/A',klass=document.getElementById('studentClass').value||'N/A',date=document.getElementById('examDate').value||new Date().toLocaleDateString(),score=document.getElementById('res-total').textContent,rate=document.getElementById('success-percent').textContent,badge=document.getElementById('success-badge').textContent;
+let qh='<div style="font-family:Arial;direction:rtl"><h2>🎯 '+(currentLang==='ar'?'نتيجة امتحان المتمّات - رياضيات 11 عام':'Complements Exam Result - Grade 11')+'</h2><p><b>الاسم:</b> '+name+'</p><p><b>الشعبة:</b> '+klass+'</p><p><b>التاريخ:</b> '+date+'</p><p><b>الدرجة:</b> '+score+' ('+rate+')</p><p><b>التقدير:</b> '+badge+'</p><hr><table style="width:100%;border-collapse:collapse"><tr style="background:#1e40af;color:white"><th style="padding:8px;border:1px solid #ddd">#</th><th style="padding:8px;border:1px solid #ddd">السؤال</th><th style="padding:8px;border:1px solid #ddd">إجابة الطالب</th><th style="padding:8px;border:1px solid #ddd">الصحيحة</th><th style="padding:8px;border:1px solid #ddd">النتيجة</th></tr>';
+let g=0;examData.sections.forEach(sec=>{qh+='<tr style="background:#dbeafe"><td colspan="5" style="padding:8px;font-weight:bold;border:1px solid #ddd">'+sec.title.ar+'</td></tr>';sec.questions.forEach(q=>{const sel=document.querySelector('input[name="q'+g+'"]:checked');const sv=sel?sel.value:null;const cv=correctAnswersMap[g];const ic=sv===cv;let sat=sv?q.options[sv.charCodeAt(0)-97][currentLang]:(currentLang==='ar'?'❌ لم يجب':'❌ No answer');const sac=ic?'#16a34a':'#dc2626';const cat=q.options[q.correct][currentLang];const rb=ic?'#f0fdf4':'#fef2f2';qh+='<tr style="background:'+rb+'"><td style="padding:8px;border:1px solid #ddd;text-align:center">'+(g+1)+'</td><td style="padding:8px;border:1px solid #ddd">'+q.q.ar.replace(/<[^>]+>/g,'').substring(0,70)+'...</td><td style="padding:8px;border:1px solid #ddd;color:'+sac+'">'+sat+'</td><td style="padding:8px;border:1px solid #ddd;color:#16a34a">'+cat+'</td><td style="padding:8px;border:1px solid #ddd;text-align:center">'+(ic?'✅':'❌')+'</td></tr>';g++})});
+qh+='</table></div>';
+emailjs.send(SERVICE_ID,TEMPLATE_ID,{to_email:TARGET_EMAIL,student_name:name,student_class:klass,exam_date:date,total_score:score,success_rate:rate,grade:badge,answers_table:qh})
+.then(()=>{status.textContent=currentLang==='ar'?'✅ تم الإرسال بنجاح!':'✅ Sent successfully!';status.style.color='#16a34a';btn.textContent=currentLang==='ar'?'✓ تم':'✓ Sent';alert(currentLang==='ar'?'تم إرسال النتيجة للمعلم بنجاح!':'Result sent to teacher successfully!')})
+.catch(err=>{status.textContent=currentLang==='ar'?'❌ فشل الإرسال':'❌ Failed';status.style.color='#dc2626';btn.disabled=false;btn.textContent=currentLang==='ar'?'📧 حاول مرة أخرى':'📧 Try Again'});}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  const saved=loadState();
+  if(saved&&saved.seed){currentSeed=saved.seed;currentLang=saved.lang||'ar';timeRemaining=saved.timeRemaining!==undefined?saved.timeRemaining:TOTAL_TIME;answersVisible=saved.answersVisible||false}else{currentSeed=Date.now()}
+  document.getElementById('btn-ar').classList.toggle('active',currentLang==='ar');
+  document.getElementById('btn-en').classList.toggle('active',currentLang==='en');
+  document.body.classList.toggle('en-mode',currentLang==='en');
+  document.documentElement.lang=currentLang;document.documentElement.dir=currentLang==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-ar]').forEach(el=>{el.textContent=el.getAttribute('data-'+currentLang)});
+  document.querySelectorAll('[data-placeholder-ar]').forEach(el=>{el.placeholder=el.getAttribute('data-placeholder-'+currentLang)});
+  prepareShuffledExam();renderExam();
+  if(saved){if(saved.studentName)document.getElementById('studentName').value=saved.studentName;if(saved.studentClass)document.getElementById('studentClass').value=saved.studentClass;if(saved.examDate)document.getElementById('examDate').value=saved.examDate;if(saved.answers)restoreAnswers(saved.answers)}
+  setupAnswerListeners();setupInputListeners();
+  document.getElementById('method-holder').innerHTML=svgGraphs.fig_rule;
+  startTimer();
+});
+window.addEventListener('beforeunload',()=>saveState(false));
+</script>
+</body>
+</html>
